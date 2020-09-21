@@ -10,7 +10,9 @@
         }
     ],
     "require": {
-        "ext-dom": "*"
+        "php": "^7.4 || ^8.0",
+        "ext-dom": "*",
+        "roave/better-reflection": "^4.9"
     },
     "autoload" : {
         "psr-4" : {

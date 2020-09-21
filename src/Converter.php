@@ -37,11 +37,23 @@ class Converter
 {
     protected $level = 0;
 
+    /** @var Factory */
+    private $factory;
+
+    public function __construct(Factory $factory = null)
+    {
+        if (null === $factory) {
+            $factory = Factory::withDefaultConverters();
+        }
+
+        $this->factory = $factory;
+    }
+
     public function convert($text)
     {
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->loadHTML('<?xml encoding="UTF-8">' . $text);
 
-        return Factory::factory($dom->documentElement)->getPdflibString();
+        return $this->factory->getConverterForTag($dom->documentElement)->getPdflibString();
     }
 } 

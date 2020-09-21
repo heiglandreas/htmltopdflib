@@ -30,12 +30,42 @@
 
 namespace Org_Heigl\HtmlToPdflib;
 
-use Org_Heigl\HtmlToPdflib\Converter\Standard;
 use DOMNode;
-use UnexpectedValueException;
+use Org_Heigl\HtmlToPdflib\Converter\Em;
+use Org_Heigl\HtmlToPdflib\Converter\Li;
+use Org_Heigl\HtmlToPdflib\Converter\Ol;
+use Org_Heigl\HtmlToPdflib\Converter\P;
+use Org_Heigl\HtmlToPdflib\Converter\Standard;
+use Org_Heigl\HtmlToPdflib\Converter\Strong;
+use Org_Heigl\HtmlToPdflib\Converter\Ul;
 
-class Factory
+final class Factory
 {
+    private static $factory;
+
+    private $converterList;
+
+    private function __construct(ConverterList $converterList)
+    {
+        $this->converterList = $converterList;
+    }
+
+    public static function fromConverterList(ConverterList $converterList): self
+    {
+        return new self($converterList);
+    }
+
+    public static function withDefaultConverters(): self
+    {
+        return new self(new ConverterList([
+            'em' => Em::class,
+            'li' => Li::class,
+            'ol' => Ol::class,
+            'p' => P::class,
+            'strong' => Strong::class,
+            'ul' => Ul::class,
+        ]));
+    }
     /**
      * @param DOMNode $node
      *
@@ -43,16 +73,24 @@ class Factory
      */
     public static function factory(DOMNode $node, ConverterInterface $converter = null)
     {
+        if (!self::$factory instanceof self) {
+            self::$factory = self::withDefaultConverters();
+        }
+
+        return self::$factory->getConverterForTag($node, $converter);
+    }
+
+    public function getConverterForTag(DOMNode $node, ConverterInterface $converter = null): ConverterInterface
+    {
+        $tagName = $node->nodeName;
+
         try {
-            $tagName = $node->nodeName;
-            $converterClass = '\\Org_Heigl\\HtmlToPdflib\Converter\\' . ucfirst(strtolower($tagName));
-            if (! class_exists($converterClass)) {
-                throw new UnexpectedValueException('Class not found');
-            }
+            $converterClass = $this->converterList->getConverterForTag($tagName);
             return new $converterClass($node, $converter);
 
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
+            // Do nothing on purpose
         }
-            return new Standard($node, $converter);
+        return new Standard($node, $converter);
     }
 } 

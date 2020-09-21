@@ -25,8 +25,33 @@ $pdflibtext = '<macro {
     bold {fontname=Helvetica fontsize=12 encoding=winansi}
     bolditalic {fontname=Helvetica fontsize=8 encoding=winansi}
     italic {fontname=Helvetica fontsize=8 encoding=winansi}
-}>' . $pdflibtext
+}>' . $pdflibtext;
 ```
+
+Alternatively – to get full flexibility – you can create the Converter with your own ConverterList like this:
+
+```php
+use Org_Heigl\HtmlToPdflib\Converter;
+use Org_Heigl\HtmlToPdflib\ConverterList;
+use Org_Heigl\HtmlToPdflib\Converter\Em;
+use Org_Heigl\HtmlToPdflib\Converter\Li;
+use Org_Heigl\HtmlToPdflib\Converter\Ol;
+use Org_Heigl\HtmlToPdflib\Converter\P;
+use Org_Heigl\HtmlToPdflib\Converter\Strong;
+use Org_Heigl\HtmlToPdflib\Converter\Ul;
+use Org_Heigl\HtmlToPdflib\Factory;
+
+$converter = new Converter(Factory::fromConverterList(new ConverterList([
+    'em' => Em::class,
+    'li' => Li::class,
+    'ol' => Ol::class,
+    'p' => P::class,
+    'strong' => Strong::class,
+    'ul' => Ul::class,
+])));
+```
+
+This allows you to also add your own Converter-implementations as long as they implement the ConvertertInterface.
 
 Currently the following macros are defined:
 
@@ -34,7 +59,7 @@ Currently the following macros are defined:
 * bolditalic
 * italic
 
-The following HTML-Tags ar ecurrently supported:
+The following HTML-Tags are currently supported:
 
 * em
 * li
