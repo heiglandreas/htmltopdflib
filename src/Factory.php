@@ -45,7 +45,7 @@ class Factory
     {
         try {
             $tagName = $node->nodeName;
-            $converterClass = '\\Org_Heigl\\HtmlToPdf\Converter\\' . ucfirst(strtolower($tagName));
+            $converterClass = '\\Org_Heigl\\HtmlToPdflib\Converter\\' . ucfirst(strtolower($tagName));
             if (! class_exists($converterClass)) {
                 throw new UnexpectedValueException('Class not found');
             }
