@@ -11,8 +11,10 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "ext-dom": "*",
-        "roave/better-reflection": "^4.9"
+        "ext-dom": "*"
+    },
+    "suggest": {
+        "roave/better-reflection": "For using ConverterList::createViaBetterReflection"
     },
     "autoload" : {
         "psr-4" : {

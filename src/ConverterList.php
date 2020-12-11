@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Org_Heigl\HtmlToPdflib;
 
-use Roave\BetterReflection\Reflection\ReflectionClass;
 use RuntimeException;
 use Throwable;
+use function class_exists;
 use function strtolower;
 
 final class ConverterList
@@ -23,11 +23,20 @@ final class ConverterList
      * ConverterList constructor.
      * @param array<array-key: class-name> $converters
      */
-    public function __construct(array $converters)
+    private function __construct()
     {
+        $this->converters = [];
+    }
+
+    public static function createViaBetterReflection(array $converters): self
+    {
+        if (! class_exists(\Roave\BetterReflection\Reflection\ReflectionClassReflectionClass)) {
+            throw new RuntimeException('BetterReflection is not installed.');
+        }
+        $list = new self;
         foreach ($converters as $key => $converter) {
             try {
-                $class = ReflectionClass::createFromName($converter);
+                $class = \Roave\BetterReflection\Reflection\ReflectionClassReflectionClass::createFromName($converter);
             } catch (Throwable $e) {
                 continue;
             }
@@ -35,8 +44,29 @@ final class ConverterList
                 continue;
             }
 
-            $this->converters[strtolower($key)] = $converter;
+            $list->converters[strtolower($key)] = $converter;
         }
+
+        return $list;
+    }
+
+    public static function createViaReflection(array $converters): self
+    {
+        $list = new self;
+        foreach ($converters as $key => $converter) {
+            try {
+                $class = new \ReflectionClass($converter);
+            } catch (Throwable $e) {
+                continue;
+            }
+            if (! $class->implementsInterface(ConverterInterface::class)) {
+                continue;
+            }
+
+            $list->converters[strtolower($key)] = $converter;
+        }
+
+        return $list;
     }
 
     public function withConverter(string $tag, string $converter): ConverterList
