@@ -41,7 +41,7 @@ use Org_Heigl\HtmlToPdflib\Converter\Strong;
 use Org_Heigl\HtmlToPdflib\Converter\Ul;
 use Org_Heigl\HtmlToPdflib\Factory;
 
-$converter = new Converter(Factory::fromConverterList(new ConverterList([
+$converter = new Converter(Factory::fromConverterList(ConverterList::createViaReflection([
     'em' => Em::class,
     'li' => Li::class,
     'ol' => Ol::class,

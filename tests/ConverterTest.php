@@ -29,7 +29,7 @@ class ConverterTest extends TestCase
 
     public function testExtendedSetup(): void
     {
-        $converter = new Converter(Factory::fromConverterList(new ConverterList([
+        $converter = new Converter(Factory::fromConverterList(ConverterList::createViaReflection([
             'em'     => Converter\Em::class,
             'li'     => Converter\Li::class,
             'ol'     => Converter\Ol::class,
