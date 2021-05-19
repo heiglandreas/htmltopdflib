@@ -23,7 +23,7 @@
     },
     "autoload-dev" : {
         "psr-4" : {
-            "Org_Heigl\\HtmlToPdflibTest\\" : "src/"
+            "Org_Heigl\\HtmlToPdflibTest\\" : "tests/"
         }
     },
     "require-dev": {

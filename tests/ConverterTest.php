@@ -40,4 +40,18 @@ class ConverterTest extends TestCase
 
         self::assertInstanceOf(Converter::class, $converter);
     }
+
+    public function testAddingOwnConverter(): void
+    {
+        $converter = new Converter(Factory::fromConverterList(ConverterList::createViaReflection([
+            'em'     => Converter\Em::class,
+            'li'     => Converter\Li::class,
+            'ol'     => Converter\Ol::class,
+            'p'      => Converter\P::class,
+            'strong' => Converter\Strong::class,
+            'ul'     => TestConverter::class,
+        ])));
+
+        self::assertEquals('pdflibString', $converter->convert('<ul><li>This is a mess</li></ul>'));
+    }
 }

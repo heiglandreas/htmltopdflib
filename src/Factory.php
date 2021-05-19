@@ -52,12 +52,14 @@ final class Factory
 
     public static function fromConverterList(ConverterList $converterList): self
     {
-        return new self($converterList);
+        self::$factory = new self($converterList);
+
+        return self::$factory;
     }
 
     public static function withDefaultConverters(): self
     {
-        return new self(ConverterList::createViaReflection([
+        self::$factory = new self(ConverterList::createViaReflection([
             'em' => Em::class,
             'li' => Li::class,
             'ol' => Ol::class,
@@ -65,6 +67,8 @@ final class Factory
             'strong' => Strong::class,
             'ul' => Ul::class,
         ]));
+
+        return self::$factory;
     }
     /**
      * @param DOMNode $node
