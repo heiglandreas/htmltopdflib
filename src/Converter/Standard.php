@@ -55,18 +55,13 @@ class Standard implements ConverterInterface
     protected $rightDelimiter = '>';
 
 
-    public function __construct(DOMNode $node, ConverterInterface $parentConverter = null)
+    public function __construct(DOMNode $node, ConverterInterface $parentConverter = null, $leftDelimiter = '<', $rightDelimiter = '>')
     {
         $this->node = $node;
         $this->parentConverter = $parentConverter;
 
-        // use the delimiters from the parent, if one is present
-        //
-        if($this->parentConverter) {
-            $this->leftDelimiter = $this->parentConverter->leftDelimiter;
-            $this->rightDelimiter = $this->parentConverter->rightDelimiter;
-        }
-
+        $this->leftDelimiter = $leftDelimiter;
+        $this->rightDelimiter = $rightDelimiter;
     }
 
     public function getPdfLibString()
@@ -90,7 +85,7 @@ class Standard implements ConverterInterface
             return $node->textContent;
         }
 
-        return Factory::factory($node, $this)->getPdfLibString();
+        return Factory::factory($node, $this, $this->leftDelimiter, $this->rightDelimiter)->getPdfLibString();
     }
 
     public function getMacro()
@@ -123,16 +118,6 @@ class Standard implements ConverterInterface
     public function getPreviousConverter()
     {
         return $this->parentConverter;
-    }
-
-    public function setLeftDelimiter($p_delimiter) {
-        $this->leftDelimiter = $p_delimiter;
-        return $this;
-    }
-
-    public function setRightDelimiter($p_delimiter) {
-        $this->rightDelimiter = $p_delimiter;
-        return $this;
     }
 
 }

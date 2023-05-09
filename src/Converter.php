@@ -43,13 +43,17 @@ class Converter
     protected $leftMacroDelimiter = '<';
     protected $rightMacroDelimiter = '>';
 
-    public function __construct(Factory $factory = null)
+    public function __construct(Factory $factory = null, $leftMacroDelimiter = '<', $rightMacroDelimiter = '>')
     {
         if (null === $factory) {
             $factory = Factory::withDefaultConverters();
         }
         
         $this->factory = $factory;
+
+        if($this->validateDelimiter($leftMacroDelimiter)) $this->leftMacroDelimiter = $leftMacroDelimiter;
+        if($this->validateDelimiter($rightMacroDelimiter)) $this->rightMacroDelimiter = $rightMacroDelimiter;
+
     }
 
     public function convert($text)
@@ -59,19 +63,9 @@ class Converter
 
         return $this->
             factory->
-            getConverterForTag($dom->documentElement)->
-            setLeftDelimiter($this->leftMacroDelimiter)->
-            setRightDelimiter($this->rightMacroDelimiter)->
+            getConverterForTag($dom->documentElement, null, $this->leftMacroDelimiter, $this->rightMacroDelimiter)->
             getPdflibString();
 
-    }
-
-    public function setLeftMacroDelimiter($p_delimiter = '<') {
-        if($this->validateDelimiter($p_delimiter)) $this->leftMacroDelimiter = $p_delimiter;
-    }
-
-    public function setRightMacroDelimiter($p_delimiter = '>') {
-        if($this->validateDelimiter($p_delimiter)) $this->rightMacroDelimiter = $p_delimiter;
     }
 
     private function validateDelimiter($p_delimiter) {
@@ -79,8 +73,6 @@ class Converter
         //
         if(strlen($p_delimiter) == 1) {
             return true;
-        } else {
-            return false;
         }
     }
 

@@ -75,26 +75,26 @@ final class Factory
      *
      * @return ConverterInterface
      */
-    public static function factory(DOMNode $node, ConverterInterface $converter = null)
+    public static function factory(DOMNode $node, ConverterInterface $converter = null, $leftDelimiter = '<', $rightDelimiter = '>')
     {
         if (!self::$factory instanceof self) {
             self::$factory = self::withDefaultConverters();
         }
 
-        return self::$factory->getConverterForTag($node, $converter);
+        return self::$factory->getConverterForTag($node, $converter, $leftDelimiter, $rightDelimiter);
     }
 
-    public function getConverterForTag(DOMNode $node, ConverterInterface $converter = null): ConverterInterface
+    public function getConverterForTag(DOMNode $node, ConverterInterface $converter = null, $leftDelimiter = '<', $rightDelimiter = '>'): ConverterInterface
     {
         $tagName = $node->nodeName;
 
         try {
             $converterClass = $this->converterList->getConverterForTag($tagName);
-            return new $converterClass($node, $converter);
+            return new $converterClass($node, $converter, $leftDelimiter, $rightDelimiter);
 
         } catch (\Exception $e) {
             // Do nothing on purpose
         }
-        return new Standard($node, $converter);
+        return new Standard($node, $converter, $leftDelimiter, $rightDelimiter);
     }
 }
