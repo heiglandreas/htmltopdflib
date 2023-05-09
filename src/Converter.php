@@ -40,13 +40,20 @@ class Converter
     /** @var Factory */
     private $factory;
 
-    public function __construct(Factory $factory = null)
+    protected $leftMacroDelimiter = '<';
+    protected $rightMacroDelimiter = '>';
+
+    public function __construct(Factory $factory = null, $leftMacroDelimiter = '<', $rightMacroDelimiter = '>')
     {
         if (null === $factory) {
             $factory = Factory::withDefaultConverters();
         }
         
         $this->factory = $factory;
+
+        if($this->validateDelimiter($leftMacroDelimiter)) $this->leftMacroDelimiter = $leftMacroDelimiter;
+        if($this->validateDelimiter($rightMacroDelimiter)) $this->rightMacroDelimiter = $rightMacroDelimiter;
+
     }
 
     public function convert($text)
@@ -54,6 +61,19 @@ class Converter
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->loadHTML('<?xml encoding="UTF-8">' . $text);
 
-        return $this->factory->getConverterForTag($dom->documentElement)->getPdflibString();
+        return $this->
+            factory->
+            getConverterForTag($dom->documentElement, null, $this->leftMacroDelimiter, $this->rightMacroDelimiter)->
+            getPdflibString();
+
     }
+
+    private function validateDelimiter($p_delimiter) {
+        // delimiter must be a single character
+        //
+        if(strlen($p_delimiter) == 1) {
+            return true;
+        }
+    }
+
 }

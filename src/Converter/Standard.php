@@ -50,10 +50,18 @@ class Standard implements ConverterInterface
 
     protected $postfix = '';
 
-    public function __construct(DOMNode $node, ConverterInterface $parentConverter = null)
+    protected $leftDelimiter = '<';
+
+    protected $rightDelimiter = '>';
+
+
+    public function __construct(DOMNode $node, ConverterInterface $parentConverter = null, $leftDelimiter = '<', $rightDelimiter = '>')
     {
         $this->node = $node;
         $this->parentConverter = $parentConverter;
+
+        $this->leftDelimiter = $leftDelimiter;
+        $this->rightDelimiter = $rightDelimiter;
     }
 
     public function getPdfLibString()
@@ -77,7 +85,7 @@ class Standard implements ConverterInterface
             return $node->textContent;
         }
 
-        return Factory::factory($node, $this)->getPdfLibString();
+        return Factory::factory($node, $this, $this->leftDelimiter, $this->rightDelimiter)->getPdfLibString();
     }
 
     public function getMacro()
@@ -85,7 +93,7 @@ class Standard implements ConverterInterface
         if (! $this->macro) {
             return '';
         }
-        $macro = '<&' . $this->macro . '>';
+        $macro = $this->leftDelimiter . '&' . $this->macro . $this->rightDelimiter;
 
         if ($macro == $this->getPreviousMacro()) {
             return '';
@@ -111,4 +119,5 @@ class Standard implements ConverterInterface
     {
         return $this->parentConverter;
     }
+
 }
